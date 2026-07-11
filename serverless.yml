@@ -6,6 +6,12 @@ provider:
   runtime: nodejs24.x
   architecture: arm64
   region: us-east-1
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action: dynamodb:PutItem
+          Resource: !GetAtt LivesTable.Arn
 
 package:
   individually: true
@@ -25,3 +31,17 @@ functions:
       - httpApi:
           path: /lives
           method: POST
+
+resources:
+  Resources:
+    LivesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: LivesTable
+        BillingMode: PAY_PER_REQUEST
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
