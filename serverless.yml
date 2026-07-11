@@ -1,19 +1,27 @@
-# "org" ensures this Service is used with the correct Serverless Framework Access Key.
 org: marinho12
-# "service" is the name of this project. This will also be added to your AWS resource names.
 service: async-process-image
 
 provider:
   name: aws
-  runtime: nodejs20.x
-  # Uncomment to easily set up a custom domain. Read the docs for more details:
-  # https://www.serverless.com/framework/docs/providers/aws/guide/domains
-  # domain: api.example.com
+  runtime: nodejs24.x
+  architecture: arm64
+  region: us-east-1
+
+package:
+  individually: true
+
+build:
+  esbuild:
+    bundle: true
+    minify: true
+    sourcemap: false
+    exclude:
+      - '@aws-sdk/*'
 
 functions:
-  hello:
-    handler: handler.hello
+  create-live:
+    handler: src/functions/http/create-live.handler
     events:
       - httpApi:
-          path: /
-          method: get
+          path: /lives
+          method: POST
