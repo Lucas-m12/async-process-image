@@ -6,6 +6,8 @@ provider:
   runtime: nodejs24.x
   architecture: arm64
   region: us-east-1
+  environment:
+    LIVES_TABLE: !Ref LivesTable
   iam:
     role:
       statements:
