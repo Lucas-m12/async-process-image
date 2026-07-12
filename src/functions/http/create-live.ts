@@ -1,5 +1,6 @@
 import { dynamoClient } from '@/clients/dynamo-client.js';
 import { env } from '@/config/env.js';
+import { extractFileInfo } from '@/utils/extract-file-info.js';
 import { response } from '@/utils/response.js';
 import { PutCommand } from '@aws-sdk/lib-dynamodb';
 import type { APIGatewayProxyEventV2 } from 'aws-lambda';
@@ -10,14 +11,19 @@ export const handler = async (event: APIGatewayProxyEventV2) => {
   const body = JSON.parse(event.body ?? '{}');
   const { success, error, data } = schema.safeParse(body);
   if (!success) return response(400, { error: error.issues });
-  const { number, title } = data;
+
+  const { number, title, filename } = data;
+  const { extension } = extractFileInfo(filename);
   const liveId = randomUUID();
+  const thumbnailKey = `${randomUUID()}.${extension}`;
+
   const putItemCommand = new PutCommand({
     TableName: env.LIVES_TABLE,
     Item: {
       id: liveId,
       number,
       title,
+      thumbnailKey
     }
   });
   await dynamoClient.send(putItemCommand);
@@ -26,5 +32,6 @@ export const handler = async (event: APIGatewayProxyEventV2) => {
 
 const schema = z.object({
   title: z.string().check(z.minLength(1)),
-  number: z.number()
+  number: z.number(),
+  filename: z.string().check(z.minLength(1)),
 });
