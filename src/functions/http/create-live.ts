@@ -18,7 +18,7 @@ export const handler = async (event: APIGatewayProxyEventV2) => {
   const { number, title, filename } = data;
   const { extension } = extractFileInfo(filename);
   const liveId = randomUUID();
-  const thumbnailKey = `${randomUUID()}.${extension}`;
+  const thumbnailKey = `uploads/${randomUUID()}.${extension}`;
 
   const putItemCommand = new PutCommand({
     TableName: env.LIVES_TABLE,
