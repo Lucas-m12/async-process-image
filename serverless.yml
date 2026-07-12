@@ -8,12 +8,18 @@ provider:
   region: us-east-1
   environment:
     LIVES_TABLE: !Ref LivesTable
+    LIVES_IMAGES_BUCKET: !Ref LivesImagesBucket
   iam:
     role:
       statements:
         - Effect: Allow
           Action: dynamodb:PutItem
           Resource: !GetAtt LivesTable.Arn
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+          Resource: !Join ['/', [!GetAtt LivesImagesBucket.Arn, '*']]
 
 package:
   individually: true
@@ -47,3 +53,8 @@ resources:
         KeySchema:
           - AttributeName: id
             KeyType: HASH
+    LivesImagesBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: lucas-lives-images
+
