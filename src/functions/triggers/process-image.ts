@@ -47,9 +47,9 @@ export const handler = async (event: S3Event) => {
     ]);
 
     const { filename } = extractFileInfo(objectKey);
-    const hdThumbnailKey = `processed/${filename}.webp`
-    const sdThumbnailKey = `processed/${filename}.webp`
-    const placeholderThumbnailKey = `processed/${filename}.webp`
+    const hdThumbnailKey = `processed/${filename}_hd.webp`
+    const sdThumbnailKey = `processed/${filename}_sd.webp`
+    const placeholderThumbnailKey = `processed/${filename}_placeholder.webp`
 
     const hdPutObject = new PutObjectCommand({
       Bucket: bucketName,
