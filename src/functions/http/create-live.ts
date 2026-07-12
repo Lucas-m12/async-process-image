@@ -32,7 +32,10 @@ export const handler = async (event: APIGatewayProxyEventV2) => {
 
   const putObjectCommand = new PutObjectCommand({
     Bucket: env.LIVES_IMAGES_BUCKET,
-    Key: thumbnailKey
+    Key: thumbnailKey,
+    Metadata: {
+      liveid: liveId,
+    }
   });
   const uploadUrl = await getSignedUrl(
     s3Client, putObjectCommand, { expiresIn: 600 }
