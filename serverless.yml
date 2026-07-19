@@ -33,8 +33,20 @@ build:
     sourcemap: false
     exclude:
       - '@aws-sdk/*'
+      - sharp
     external:
       - sharp
+
+layers:
+  Sharp:
+    name: sharp-layer
+    description: sharp package and its binaries.
+    path: layers/sharp
+    retain: false
+    compatibleArchitectures:
+      - arm64
+    compatibleRuntimes:
+      - nodejs24.x
 
 functions:
   create-live:
@@ -45,6 +57,8 @@ functions:
           method: POST
   process-image:
     handler: src/functions/triggers/process-image.handler
+    layers:
+      - !Ref SharpLambdaLayer
     events:
       - s3:
           bucket: !Ref LivesImagesBucket
